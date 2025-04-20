@@ -6,6 +6,7 @@ from datetime import datetime
 import mlflow
 
 # Set MLflow tracking URI
+
 mlflow.set_tracking_uri("file:./mlruns")
 
 NEWS_API_KEY = os.getenv("NEWSAPI_KEY")
