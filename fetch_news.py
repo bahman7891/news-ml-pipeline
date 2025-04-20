@@ -5,8 +5,6 @@ import pandas as pd
 from datetime import datetime
 import mlflow
 
-# Set MLflow tracking URI
-
 mlflow.set_tracking_uri("file:./mlruns")
 
 NEWS_API_KEY = os.getenv("NEWSAPI_KEY")
@@ -46,7 +44,36 @@ def fetch_news():
         file_path = f"data/news_{timestamp}.csv"
         df.to_csv(file_path, index=False)
         mlflow.log_artifact(file_path)
-        print(f"Saved news data to {file_path}")
+
+        # HTML Dashboard generation
+        html_table = df[["source", "title", "publishedAt"]].to_html(
+            index=False, render_links=True, escape=False, border=1
+        )
+        html_page = f"""
+        <html>
+        <head>
+            <title>News Dashboard</title>
+            <meta charset="utf-8">
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 40px; }}
+                table {{ width: 100%; border-collapse: collapse; }}
+                th, td {{ padding: 8px 12px; border: 1px solid #ccc; }}
+                th {{ background-color: #f4f4f4; }}
+            </style>
+        </head>
+        <body>
+            <h1>📰 Latest News Dashboard</h1>
+            <p>Updated on: {timestamp}</p>
+            {html_table}
+        </body>
+        </html>
+        """
+
+        with open("news_dashboard.html", "w", encoding="utf-8") as f:
+            f.write(html_page)
+
+        mlflow.log_artifact("news_dashboard.html")
+        print(f"Saved news dashboard to news_dashboard.html")
 
 if __name__ == "__main__":
     fetch_news()
