@@ -35,7 +35,7 @@ jobs:
         python train_model.py
 
     - name: Upload MLflow logs
-      uses: dawidd6/action-upload-artifact@v4
+      uses: actions/upload-artifact@4
       with:
         name: mlflow-logs
         path: mlruns/
