@@ -8,6 +8,9 @@ import glob
 import mlflow
 import mlflow.sklearn
 
+# Set MLflow tracking URI to local directory
+mlflow.set_tracking_uri("file:./mlruns")
+
 def get_latest_news_file():
     files = glob.glob("data/news_*.csv")
     return sorted(files)[-1] if files else None
@@ -17,21 +20,28 @@ def train():
     if not news_file:
         print("No news file found.")
         return
-    
-    df = pd.read_csv(news_file)
-    df["text"] = df["title"].fillna("") + " " + df["description"].fillna("")
-    df["label"] = [1 if "AI" in t else 0 for t in df["text"]]
 
-    pipeline = Pipeline([
-        ("tfidf", TfidfVectorizer()),
-        ("clf", LogisticRegression())
-    ])
+    df = pd.read_csv(news_file)
 
     with mlflow.start_run():
+        if df.empty:
+            mlflow.log_param("training_status", "skipped - empty data")
+            mlflow.log_metric("num_records", 0)
+            return
+
+        df["text"] = df["title"].fillna("") + " " + df["description"].fillna("")
+        df["label"] = [1 if "AI" in t else 0 for t in df["text"]]
+
+        mlflow.log_param("training_status", "complete")
+        mlflow.log_metric("num_records", len(df))
         mlflow.log_param("vectorizer", "TfidfVectorizer")
         mlflow.log_param("classifier", "LogisticRegression")
         mlflow.log_metric("num_positive_labels", df["label"].sum())
-        mlflow.log_metric("dataset_size", len(df))
+
+        pipeline = Pipeline([
+            ("tfidf", TfidfVectorizer()),
+            ("clf", LogisticRegression())
+        ])
 
         pipeline.fit(df["text"], df["label"])
         print("Model trained and logged with MLflow.")
