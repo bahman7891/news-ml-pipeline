@@ -11,8 +11,11 @@ NEWS_API_KEY = os.getenv("NEWSAPI_KEY")
 NEWS_URL = "https://newsapi.org/v2/top-headlines?country=us&pageSize=100"
 
 def fetch_news():
-    headers = {"Authorization": NEWS_API_KEY}
-    response = requests.get(NEWS_URL, headers=headers)
+    headers = {"x-api-key": os.getenv("NEWSAPI_KEY")}
+    response = requests.get("https://newsapi.org/v2/top-headlines?country=us&pageSize=100", headers=headers)
+
+    #headers = {"Authorization": NEWS_API_KEY}
+    #response = requests.get(NEWS_URL, headers=headers)
     print("Status Code:", response.status_code)
     print("Response:", response.json())
     data = response.json()
