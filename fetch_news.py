@@ -8,6 +8,7 @@ import mlflow
 mlflow.set_tracking_uri("file:./mlruns")
 
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
+print(NEWS_API_KEY)
 NEWS_URL = "https://newsapi.org/v2/top-headlines?country=us&pageSize=100"
 
 def fetch_news():
