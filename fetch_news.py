@@ -11,7 +11,7 @@ NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 NEWS_URL = "https://newsapi.org/v2/top-headlines?country=us&pageSize=100"
 
 def fetch_news():
-    
+
     headers = {"x-api-key": NEWS_API_KEY}
     response = requests.get("https://newsapi.org/v2/top-headlines?country=us&pageSize=100", headers=headers)
     data = response.json()
@@ -70,8 +70,13 @@ def fetch_news():
         </html>
         """
 
+
         with open("news_dashboard.html", "w", encoding="utf-8") as f:
             f.write(html_page)
+
+        with open("news_dashboard.html", "a", encoding="utf-8") as f:
+            f.write(f"<footer style='margin-top:40px;font-size:12px;'>Last updated: {timestamp}</footer>")
+
 
         mlflow.log_artifact("news_dashboard.html")
         print(f"Saved news dashboard to news_dashboard.html")
