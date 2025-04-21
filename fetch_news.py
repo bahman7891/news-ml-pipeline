@@ -7,17 +7,17 @@ import mlflow
 
 mlflow.set_tracking_uri("file:./mlruns")
 
-NEWS_API_KEY = os.getenv("NEWSAPI_KEY")
+NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 NEWS_URL = "https://newsapi.org/v2/top-headlines?country=us&pageSize=100"
 
 def fetch_news():
     #headers = {"x-api-key": os.getenv("NEWSAPI_KEY")}
     #response = requests.get("https://newsapi.org/v2/top-headlines?country=us&pageSize=100", headers=headers)
 
-    #headers = {"Authorization": NEWS_API_KEY}
-    #response = requests.get(NEWS_URL, headers=headers)
-    url = f"https://newsapi.org/v2/top-headlines?country=us&pageSize=100&apiKey={os.getenv('NEWSAPI_KEY')}"
-    response = requests.get(url)
+    headers = {"Authorization": NEWS_API_KEY}
+    response = requests.get(NEWS_URL, headers=headers)
+    #url = f"https://newsapi.org/v2/top-headlines?country=us&pageSize=100&apiKey={os.getenv('NEWSAPI_KEY')}"
+    #response = requests.get(url)
 
     print("Status Code:", response.status_code)
     print("Response:", response.json())
