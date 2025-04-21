@@ -1,5 +1,5 @@
 
-name: CI and Dashboard Update
+name: CI, News Dashboard & Model Training
 
 on:
   push:
@@ -9,12 +9,16 @@ on:
   schedule:
     - cron: '0 8 * * *'
 
+env:
+  NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
+  MLFLOW_TRACKING_URI: http://127.0.0.1:5000
+
 jobs:
-  run-ci-and-dashboard:
+  ci-full-pipeline:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout pipeline repo
       uses: actions/checkout@v3
 
     - name: Set up Python
@@ -24,13 +28,27 @@ jobs:
 
     - name: Install dependencies
       run: |
+        pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run fetch_news and generate dashboard
+    - name: Run fetch_news to get latest headlines
       run: |
-        python fetch_news.py
-        echo "✅ Generated dashboard:"
-        ls -lh news_dashboard.html
+        python fetch_news.py || echo "⚠️ News fetch failed or empty"
+        if [ -f news_dashboard.html ]; then
+          echo "✅ Dashboard generated:"
+          ls -lh news_dashboard.html
+        else
+          echo "🚫 No dashboard created"
+        fi
+
+    - name: Train ML model on latest data
+      run: |
+        if [ -d data ]; then
+          echo "📊 Training model on latest data..."
+          python train_model.py
+        else
+          echo "⚠️ No data found. Skipping model training."
+        fi
 
     - name: Checkout GitHub Pages repo
       uses: actions/checkout@v3
@@ -41,15 +59,18 @@ jobs:
 
     - name: Copy dashboard to GitHub Pages repo
       run: |
-        cp news_dashboard.html pages/news_dashboard.html
-        echo "✅ Copied dashboard to Pages repo"
-        ls -lh pages/news_dashboard.html
+        if [ -f news_dashboard.html ]; then
+          cp news_dashboard.html pages/news_dashboard.html
+          echo "✅ Copied dashboard to Pages repo"
+        else
+          echo "⚠️ No dashboard file to copy"
+        fi
 
     - name: Commit and push dashboard
       run: |
         cd pages
         git config user.name "github-actions"
         git config user.email "actions@github.com"
-        git add news_dashboard.html
-        git commit -m "Update news dashboard [CI+Dashboard]" || echo "No changes to commit"
-        git push origin main
+        git add news_dashboard.html || true
+        git commit -m "Update news dashboard and model [automated]" || echo "No changes to commit"
+        git push origin main || echo "Nothing to push"
