@@ -43,7 +43,7 @@ def train():
             ("clf", LogisticRegression())
         ])
 
-        pipeline.fit(df["text"], df["label"])
+        #pipeline.fit(df["text"], df["label"])
         print("Model trained and logged with MLflow.")
 
         os.makedirs("models", exist_ok=True)
