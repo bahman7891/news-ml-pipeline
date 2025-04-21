@@ -1,0 +1,58 @@
+
+name: Update News Dashboard on GitHub Pages
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * *'
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout pipeline repo
+      uses: actions/checkout@v3
+      with:
+        repository: bahman7891/news-ml-pipeline
+        path: pipeline
+        token: ${{ secrets.GH_TOKEN }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        cd pipeline
+        pip install -r requirements.txt
+
+    - name: Run fetch_news and generate dashboard
+      run: |
+        cd pipeline
+        python fetch_news.py
+        echo "✅ Generated dashboard:"
+        ls -lh news_dashboard.html
+
+    - name: Checkout GitHub Pages repo
+      uses: actions/checkout@v3
+      with:
+        repository: bahman7891/bahmanroostaei.github.io
+        path: pages
+        token: ${{ secrets.GH_TOKEN }}
+
+    - name: Copy dashboard to GitHub Pages repo
+      run: |
+        cp pipeline/news_dashboard.html pages/news_dashboard.html
+        echo "✅ Copied dashboard to Pages repo"
+        ls -lh pages/news_dashboard.html
+
+    - name: Commit and push changes
+      run: |
+        cd pages
+        git config user.name "github-actions"
+        git config user.email "actions@github.com"
+        git add news_dashboard.html
+        git commit -m "Update news dashboard [automated]" || echo "No changes to commit"
+        git push origin main
