@@ -1,4 +1,3 @@
-
 import os
 import requests
 import pandas as pd
@@ -11,19 +10,29 @@ NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 NEWS_URL = "https://newsapi.org/v2/top-headlines?country=us&pageSize=100"
 
 def fetch_news():
+    if not NEWS_API_KEY:
+        raise RuntimeError("🚨 NEWS_API_KEY is not set!")
 
-    headers = {"x-api-key": NEWS_API_KEY}
-    response = requests.get("https://newsapi.org/v2/top-headlines?country=us&pageSize=100", headers=headers)
+    print(f"Using API Key: {NEWS_API_KEY[:4]}***")  # Only print first 4 characters for safety
+
+    # Pass key in URL directly (simpler and matches NewsAPI recommendation)
+    response = requests.get(f"{NEWS_URL}&apiKey={NEWS_API_KEY}")
     data = response.json()
-    
+
+    if response.status_code != 200:
+        raise RuntimeError(f"API call failed: {data.get('message', response.status_code)}")
+
     articles = data.get("articles", [])
     records = []
+
     for article in articles:
         records.append({
-            "source": article["source"]["name"],
-            "title": article["title"],
-            "description": article["description"],
-            "publishedAt": article["publishedAt"]
+            "source": article.get("source", {}).get("name", ""),
+            "title": article.get("title", ""),
+            "description": article.get("description", ""),
+            "content": article.get("content", ""),
+            "publishedAt": article.get("publishedAt", ""),
+            "url": article.get("url", "")
         })
 
     df = pd.DataFrame(records)
@@ -66,20 +75,16 @@ def fetch_news():
             <h1>📰 Latest News Dashboard</h1>
             <p>Updated on: {timestamp}</p>
             {html_table}
+            <footer style='margin-top:40px;font-size:12px;'>Last updated: {timestamp}</footer>
         </body>
         </html>
         """
 
-
         with open("news_dashboard.html", "w", encoding="utf-8") as f:
             f.write(html_page)
 
-        with open("news_dashboard.html", "a", encoding="utf-8") as f:
-            f.write(f"<footer style='margin-top:40px;font-size:12px;'>Last updated: {timestamp}</footer>")
-
-
         mlflow.log_artifact("news_dashboard.html")
-        print(f"Saved news dashboard to news_dashboard.html")
+        print(f"✅ Saved news dashboard to news_dashboard.html")
 
 if __name__ == "__main__":
     fetch_news()
