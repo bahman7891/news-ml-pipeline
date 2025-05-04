@@ -1,4 +1,3 @@
-
 name: CI, News Dashboard & Model Training
 
 on:
@@ -41,6 +40,14 @@ jobs:
           echo "🚫 No dashboard created"
         fi
 
+    - name: Cluster articles
+      run: |
+        python article_clustering/cluster_articles.py || echo "⚠️ Clustering skipped"
+
+    - name: Label topic clusters
+      run: |
+        python label_cluster.py || echo "⚠️ Labeling skipped"
+
     - name: Train ML model on latest data
       run: |
         if [ -d data ]; then
@@ -57,20 +64,22 @@ jobs:
         path: pages
         token: ${{ secrets.GH_TOKEN }}
 
-    - name: Copy dashboard to GitHub Pages repo
+    - name: Copy dashboard and artifacts to GitHub Pages repo
       run: |
+        mkdir -p pages/assets
         if [ -f news_dashboard.html ]; then
-          cp news_dashboard.html pages/news_dashboard.html
-          echo "✅ Copied dashboard to Pages repo"
-        else
-          echo "⚠️ No dashboard file to copy"
+          cp news_dashboard.html pages/assets/news_dashboard.html
         fi
+        if [ -f umap_plot.html ]; then
+          cp umap_plot.html pages/assets/umap_plot.html
+        fi
+        echo "✅ Copied assets to GitHub Pages repo"
 
-    - name: Commit and push dashboard
+    - name: Commit and push updated dashboard
       run: |
         cd pages
         git config user.name "github-actions"
         git config user.email "actions@github.com"
-        git add news_dashboard.html || true
-        git commit -m "Update news dashboard and model [automated]" || echo "No changes to commit"
+        git add assets/news_dashboard.html assets/umap_plot.html || true
+        git commit -m "Update dashboard and artifacts [automated]" || echo "No changes to commit"
         git push origin main || echo "Nothing to push"
