@@ -26,4 +26,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ secrets.AZURE_ACR_LOGIN_SERVER }}/news-pipeline:latest
+        tags: "${{ secrets.AZURE_ACR_LOGIN_SERVER }}/news-pipeline:latest"
