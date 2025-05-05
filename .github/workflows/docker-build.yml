@@ -21,10 +21,9 @@ jobs:
         username: ${{ secrets.AZURE_ACR_USERNAME }}
         password: ${{ secrets.AZURE_ACR_PASSWORD }}
 
-    - name: Build Docker image
-      run: |
-        docker build -t ${{ secrets.AZURE_ACR_LOGIN_SERVER }}/news-pipeline:latest .
-
-    - name: Push Docker image to ACR
-      run: |
-        docker push ${{ secrets.AZURE_ACR_LOGIN_SERVER }}/news-pipeline:latest
+    - name: Build and push image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.AZURE_ACR_LOGIN_SERVER }}/news-pipeline:latest
