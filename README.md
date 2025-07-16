@@ -1,4 +1,4 @@
-# News ML Pipeline
+# News ML Pipeline - In Progress
 
 A fully automated machine learning pipeline that fetches, processes, clusters, and visualizes the latest news articles using **NewsAPI**. The pipeline runs daily via **GitHub Actions** and updates a live dashboard hosted on **GitHub Pages**.
 
