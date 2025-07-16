@@ -50,7 +50,7 @@ def main():
     labeled_output_path = latest_clustered_file.replace('clustered_', 'labeled_clustered_')
     df.to_csv(labeled_output_path, index=False)
 
-    print(f"\n✅ Labeled clusters and saved to {labeled_output_path}!")
+    print(f"\n Labeled clusters and saved to {labeled_output_path}!")
     print(df[['title', 'cluster', 'cluster_label']].head())
 
 if __name__ == "__main__":
