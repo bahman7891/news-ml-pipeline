@@ -29,9 +29,9 @@ def cluster_texts(embeddings, n_clusters=8):
     return cluster_labels
 
 def save_clustered_data(df, cluster_labels, output_csv_path):
-    df['cluster'] = cluster_labels   # ✅ Now naming the column 'cluster'
+    df['cluster'] = cluster_labels   # Now naming the column 'cluster'
     df.to_csv(output_csv_path, index=False)
-    print(f"✅ Clustered data saved to {output_csv_path}")
+    print(f" Clustered data saved to {output_csv_path}")
 
 def main():
     # Find latest news CSV
@@ -81,9 +81,9 @@ def cluster_texts(embeddings, n_clusters=8):
     return cluster_labels
 
 def save_clustered_data(df, cluster_labels, output_csv_path):
-    df['cluster'] = cluster_labels   # ✅ Now naming the column 'cluster'
+    df['cluster'] = cluster_labels   #  Now naming the column 'cluster'
     df.to_csv(output_csv_path, index=False)
-    print(f"✅ Clustered data saved to {output_csv_path}")
+    print(f" Clustered data saved to {output_csv_path}")
 
 def main():
     # Find latest news CSV
