@@ -11,7 +11,7 @@ NEWS_URL = "https://newsapi.org/v2/top-headlines?country=us&pageSize=100"
 
 def fetch_news():
     if not NEWS_API_KEY:
-        raise RuntimeError("❌ NEWS_API_KEY is not set!")
+        raise RuntimeError(" NEWS_API_KEY is not set!")
 
     print(f"🔑 Using API Key: {NEWS_API_KEY[:4]}***")
 
@@ -20,11 +20,11 @@ def fetch_news():
     data = response.json()
 
     if response.status_code != 200:
-        raise RuntimeError(f"❌ API call failed: {data.get('message', response.status_code)}")
+        raise RuntimeError(f" API call failed: {data.get('message', response.status_code)}")
 
     articles = data.get("articles", [])
     if not articles:
-        raise RuntimeError("❌ No articles returned from NewsAPI. Dashboard will not be generated.")
+        raise RuntimeError(" No articles returned from NewsAPI. Dashboard will not be generated.")
 
     records = []
     for article in articles:
@@ -76,7 +76,7 @@ def fetch_news():
     </style>
 </head>
 <body>
-    <h1>📰 Latest News Dashboard</h1>
+    <h1> Latest News Dashboard</h1>
     <p>Updated: {timestamp}</p>
     {html_table}
     <footer>Auto-generated from NewsAPI on {timestamp}</footer>
@@ -89,7 +89,7 @@ def fetch_news():
             f.write(html_page)
 
         mlflow.log_artifact(html_path)
-        print(f"✅ Dashboard saved at {os.path.abspath(html_path)}")
+        print(f" Dashboard saved at {os.path.abspath(html_path)}")
 
 if __name__ == "__main__":
     fetch_news()
