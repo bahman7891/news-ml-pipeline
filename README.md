@@ -11,10 +11,6 @@ This project uses a CI/CD pipeline to:
 4. Generate a visual HTML dashboard summarizing the top clusters.
 5. Deploy the dashboard automatically to GitHub Pages.
 
-## Live Demo
-
-[News Dashboard](https://bahman7891.github.io)
-
 ## Features
 
 - Automated news ingestion using NewsAPI
@@ -23,6 +19,3 @@ This project uses a CI/CD pipeline to:
 - Dashboard generation in HTML with topic summaries
 - CI/CD with GitHub Actions for daily updates
 - Hosted on GitHub Pages
-
-## Project Structure
-
