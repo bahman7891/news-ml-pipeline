@@ -13,7 +13,7 @@ def fetch_news():
     if not NEWS_API_KEY:
         raise RuntimeError(" NEWS_API_KEY is not set!")
 
-    print(f"🔑 Using API Key: {NEWS_API_KEY[:4]}***")
+    print(f" Using API Key: {NEWS_API_KEY[:4]}***")
 
     # Fetch top headlines
     response = requests.get(f"{NEWS_URL}&apiKey={NEWS_API_KEY}")
@@ -40,7 +40,7 @@ def fetch_news():
     df = pd.DataFrame(records)
 
     # Print a preview in GitHub logs
-    print("📰 Top 5 Articles:")
+    print(" Top 5 Articles:")
     print(df[["source", "title", "publishedAt"]].head())
 
     with mlflow.start_run(run_name="fetch_news"):
